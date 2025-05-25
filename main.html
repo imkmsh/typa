@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Typa - Typing Practice</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      body {
+        font-family: sans-serif;
+        background: #eef6ff;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 2rem;
+      }
+      h1 {
+        color: #0d47a1;
+      }
+      #sentenceDisplay {
+        font-size: 1.2rem;
+        padding: 1rem;
+        border-radius: 10px;
+        background: #fffde7;
+        margin-bottom: 1rem;
+        font-family: monospace;
+        max-width: 700px;
+        word-break: break-word;
+      }
+      #sentenceDisplay span.correct {
+        color: green;
+      }
+      #sentenceDisplay span.incorrect {
+        color: red;
+        text-decoration: underline;
+      }
+      textarea {
+        font-size: 1rem;
+        padding: 1rem;
+        width: 100%;
+        max-width: 700px;
+        height: 100px;
+        box-sizing: border-box;
+        border: 2px solid #2196f3;
+        border-radius: 10px;
+      }
+      #stats {
+        margin-top: 1rem;
+        font-size: 1rem;
+        color: #333;
+      }
+      button {
+        margin-top: 1rem;
+        padding: 0.6rem 1.2rem;
+        font-weight: bold;
+        background: #2196f3;
+        color: white;
+        border: none;
+        border-radius: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Typa</h1>
+    <div id="sentenceDisplay"></div>
+    <textarea id="inputBox" placeholder="Start typing here..."></textarea>
+    <div id="stats">CPS: 0 | Errors: 0</div>
+    <button onclick="loadNewSentence()">Next Sentence</button>
+
+    <script>
+      const sentences = [
+        'The quick brown fox jumps over the lazy dog.',
+        'Typing fast and accurately is a valuable skill.',
+        'Practice makes perfect, so keep going!',
+        'Learning to type takes time and effort.',
+        'Accuracy is more important than speed.',
+        'This sentence is a typing test example.',
+        'Focus on one letter at a time.',
+        "Don't rush, just keep practicing daily.",
+        'Typing with ten fingers is the goal.',
+        'You can do it if you stay consistent.',
+      ];
+
+      const sentenceDisplay = document.getElementById('sentenceDisplay');
+      const inputBox = document.getElementById('inputBox');
+      const stats = document.getElementById('stats');
+      let currentSentence = '';
+      let startTime;
+
+      function loadNewSentence() {
+        const random = Math.floor(Math.random() * sentences.length);
+        currentSentence = sentences[random];
+        sentenceDisplay.innerHTML = currentSentence
+          .split('')
+          .map((char) => `<span>${char}</span>`)
+          .join('');
+
+        inputBox.value = '';
+        inputBox.focus();
+        startTime = new Date();
+        updateStats();
+      }
+
+      inputBox.addEventListener('input', () => {
+        const input = inputBox.value;
+        const spans = sentenceDisplay.querySelectorAll('span');
+        let correctChars = 0;
+        let errorCount = 0;
+
+        for (let i = 0; i < spans.length; i++) {
+          const char = input[i];
+          if (char == null) {
+            spans[i].className = '';
+          } else if (char === currentSentence[i]) {
+            spans[i].className = 'correct';
+            correctChars++;
+          } else {
+            spans[i].className = 'incorrect';
+            errorCount++;
+          }
+        }
+
+        // 🔧 여기에 추가해줘야 합니다
+        const elapsedSeconds = (new Date() - startTime) / 1000;
+        const cps = elapsedSeconds > 0 ? (correctChars / elapsedSeconds).toFixed(2) : 0;
+
+        updateStats(cps, errorCount);
+      });
+
+      function updateStats(cps = 0, errors = 0) {
+        stats.textContent = `CPS: ${cps} | Errors: ${errors}`;
+      }
+
+      // 초기 문장 로딩
+      loadNewSentence();
+    </script>
+  </body>
+</html>
